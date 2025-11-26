@@ -1,3 +1,4 @@
+
 export interface Message {
   id: string;
   role: 'user' | 'model';
@@ -34,9 +35,12 @@ export interface AIState {
 
 export type ResponseStyle = 'Default' | 'Formal' | 'Casual' | 'Concise';
 
+export type AppTheme = 'blue' | 'violet' | 'emerald' | 'orange' | 'rose' | 'slate';
+
 export interface UserProfile {
   name: string;
   language: string;
   responseStyle: ResponseStyle;
   customInstructions: string;
+  theme: AppTheme;
 }

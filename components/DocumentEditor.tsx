@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DocumentData, EditorActionType } from '../types';
+import { DocumentData, EditorActionType, AppTheme } from '../types';
 import { processDocumentAction } from '../services/geminiService';
 import { Button } from './Button';
 import { Wand2, SpellCheck, FileText, Briefcase, Languages, Save, RotateCcw } from 'lucide-react';
@@ -7,9 +7,10 @@ import { Wand2, SpellCheck, FileText, Briefcase, Languages, Save, RotateCcw } fr
 interface DocumentEditorProps {
   document: DocumentData;
   onUpdate: (doc: DocumentData) => void;
+  theme?: AppTheme;
 }
 
-export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpdate }) => {
+export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpdate, theme = 'blue' }) => {
   const [content, setContent] = useState(document.content);
   const [isProcessing, setIsProcessing] = useState<EditorActionType | null>(null);
   const [lastSaved, setLastSaved] = useState(document.lastModified);
@@ -33,8 +34,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
     setIsProcessing(action);
     try {
       const result = await processDocumentAction(action, content);
-      // For simplicity in this demo, we append the result or replace based on action
-      // In a real app, we might show a diff or ask for confirmation
       
       let newContent = content;
       if (action === EditorActionType.SUMMARIZE) {
@@ -42,7 +41,6 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
       } else if (action === EditorActionType.TRANSLATE_ES) {
         newContent = `${content}\n\n--- Spanish Translation ---\n${result}`;
       } else {
-        // For rewrite actions, we replace the content
         newContent = result;
       }
       
@@ -67,6 +65,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
             onClick={() => handleAIAction(EditorActionType.SUMMARIZE)}
             isLoading={isProcessing === EditorActionType.SUMMARIZE}
             className="whitespace-nowrap"
+            theme={theme}
           >
             <FileText className="w-3.5 h-3.5 mr-1.5" />
             Summarize
@@ -78,6 +77,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
             onClick={() => handleAIAction(EditorActionType.FIX_GRAMMAR)}
             isLoading={isProcessing === EditorActionType.FIX_GRAMMAR}
             className="whitespace-nowrap"
+            theme={theme}
           >
             <SpellCheck className="w-3.5 h-3.5 mr-1.5" />
             Fix Grammar
@@ -89,6 +89,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
             onClick={() => handleAIAction(EditorActionType.EXPAND)}
             isLoading={isProcessing === EditorActionType.EXPAND}
             className="whitespace-nowrap"
+            theme={theme}
           >
             <Wand2 className="w-3.5 h-3.5 mr-1.5" />
             Expand
@@ -100,6 +101,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
             onClick={() => handleAIAction(EditorActionType.MAKE_PROFESSIONAL)}
             isLoading={isProcessing === EditorActionType.MAKE_PROFESSIONAL}
             className="whitespace-nowrap"
+            theme={theme}
           >
             <Briefcase className="w-3.5 h-3.5 mr-1.5" />
             Professional
@@ -111,6 +113,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
             onClick={() => handleAIAction(EditorActionType.TRANSLATE_ES)}
             isLoading={isProcessing === EditorActionType.TRANSLATE_ES}
             className="whitespace-nowrap"
+            theme={theme}
           >
             <Languages className="w-3.5 h-3.5 mr-1.5" />
             Translate
@@ -121,10 +124,10 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
              <span className="text-xs text-slate-400 hidden md:inline">
                 Last saved: {new Date(lastSaved).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
-            <Button variant="ghost" size="sm" onClick={() => setContent(document.content)} title="Revert Changes">
+            <Button variant="ghost" size="sm" onClick={() => setContent(document.content)} title="Revert Changes" theme={theme}>
                 <RotateCcw className="w-4 h-4" />
             </Button>
-            <Button variant="primary" size="sm" onClick={handleSave}>
+            <Button variant="primary" size="sm" onClick={handleSave} theme={theme}>
                 <Save className="w-4 h-4 mr-1.5" />
                 Save
             </Button>
@@ -143,7 +146,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ document, onUpda
         {isProcessing && (
             <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-10">
                 <div className="bg-white p-4 rounded-xl shadow-xl flex flex-col items-center animate-bounce-slight">
-                    <Wand2 className="w-8 h-8 text-purple-600 mb-2 animate-pulse" />
+                    <Wand2 className={`w-8 h-8 text-${theme}-600 mb-2 animate-pulse`} />
                     <p className="text-slate-800 font-medium">Gemini is working...</p>
                 </div>
             </div>

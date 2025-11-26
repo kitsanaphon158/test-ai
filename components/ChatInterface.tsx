@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Message, UserProfile } from '../types';
 import { Send, Bot, User, Trash2, StopCircle } from 'lucide-react';
@@ -14,6 +15,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const theme = userProfile?.theme || 'blue';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -98,12 +101,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
       <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
         <div>
           <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <Bot className="w-5 h-5 text-blue-600" />
+            <Bot className={`w-5 h-5 text-${theme}-600`} />
             AI Chat Assistant
           </h2>
           <p className="text-xs text-slate-500">Powered by Gemini 3 Pro</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={clearChat} title="Clear history">
+        <Button variant="ghost" size="sm" onClick={clearChat} title="Clear history" theme={theme}>
             <Trash2 className="w-4 h-4" />
         </Button>
       </div>
@@ -130,7 +133,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  msg.role === 'user' ? 'bg-blue-600' : 'bg-emerald-600'
+                  msg.role === 'user' ? `bg-${theme}-600` : 'bg-slate-700'
                 }`}
               >
                 {msg.role === 'user' ? (
@@ -143,7 +146,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
               <div
                 className={`p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
                   msg.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-none shadow-md'
+                    ? `bg-${theme}-600 text-white rounded-br-none shadow-md`
                     : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-sm'
                 } ${msg.isError ? 'border-red-300 bg-red-50 text-red-800' : ''}`}
               >
@@ -166,7 +169,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message..."
-            className="w-full p-3 pr-12 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32 min-h-[50px] text-sm"
+            className={`w-full p-3 pr-12 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-${theme}-500 focus:border-transparent resize-none max-h-32 min-h-[50px] text-sm`}
             rows={1}
             disabled={isTyping}
           />
@@ -175,6 +178,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, setMessa
             disabled={!input.trim() || isTyping}
             className="absolute right-2 bottom-2 !p-2 rounded-lg"
             variant="primary"
+            theme={theme}
           >
             {isTyping ? <StopCircle className="w-5 h-5" /> : <Send className="w-5 h-5" />}
           </Button>

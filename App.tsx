@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AppView, Message, DocumentData, UserProfile } from './types';
 import { ChatInterface } from './components/ChatInterface';
@@ -15,13 +16,16 @@ function App() {
       name: '',
       language: 'English',
       responseStyle: 'Default',
-      customInstructions: ''
+      customInstructions: '',
+      theme: 'blue'
     };
   });
 
   useEffect(() => {
     localStorage.setItem('nexgen_user_profile', JSON.stringify(userProfile));
   }, [userProfile]);
+
+  const theme = userProfile.theme || 'blue';
 
   // Chat State
   const [messages, setMessages] = useState<Message[]>([
@@ -46,7 +50,7 @@ function App() {
       case AppView.CHAT:
         return <ChatInterface messages={messages} setMessages={setMessages} userProfile={userProfile} />;
       case AppView.EDITOR:
-        return <DocumentEditor document={currentDoc} onUpdate={setCurrentDoc} />;
+        return <DocumentEditor document={currentDoc} onUpdate={setCurrentDoc} theme={theme} />;
       case AppView.SETTINGS:
         return <ProfileSettings userProfile={userProfile} onUpdate={setUserProfile} />;
       default:
@@ -68,7 +72,7 @@ function App() {
       {/* Sidebar Navigation */}
       <aside className="w-20 lg:w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300">
         <div className="p-4 lg:p-6 flex items-center gap-3 border-b border-slate-800">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-900/20">
+          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-${theme}-500 to-${theme}-700 flex items-center justify-center shadow-lg shadow-${theme}-900/20`}>
             <Sparkles className="text-white w-6 h-6" />
           </div>
           <span className="font-bold text-white text-lg tracking-tight hidden lg:block">NexGen</span>
@@ -79,7 +83,7 @@ function App() {
             onClick={() => setCurrentView(AppView.CHAT)}
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group ${
               currentView === AppView.CHAT
-                ? 'bg-blue-600 text-white shadow-md'
+                ? `bg-${theme}-600 text-white shadow-md`
                 : 'hover:bg-slate-800 text-slate-400 hover:text-white'
             }`}
           >
@@ -94,7 +98,7 @@ function App() {
             onClick={() => setCurrentView(AppView.EDITOR)}
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group ${
               currentView === AppView.EDITOR
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? `bg-${theme}-600 text-white shadow-md`
                 : 'hover:bg-slate-800 text-slate-400 hover:text-white'
             }`}
           >
@@ -109,7 +113,7 @@ function App() {
             onClick={() => setCurrentView(AppView.SETTINGS)}
             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group ${
               currentView === AppView.SETTINGS
-                ? 'bg-purple-600 text-white shadow-md'
+                ? `bg-${theme}-600 text-white shadow-md`
                 : 'hover:bg-slate-800 text-slate-400 hover:text-white'
             }`}
           >
@@ -144,7 +148,7 @@ function App() {
             {getHeaderTitle()}
           </h1>
           <div className="flex items-center gap-4">
-             <span className="text-xs font-medium px-2 py-1 rounded bg-purple-50 text-purple-700 border border-purple-100 hidden sm:block">
+             <span className={`text-xs font-medium px-2 py-1 rounded bg-${theme}-50 text-${theme}-700 border border-${theme}-100 hidden sm:block`}>
                 Gemini Models Active
              </span>
           </div>
